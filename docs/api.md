@@ -2,24 +2,24 @@
 
 ## API一覧
 
-|Method|URI|Query|Description|
-|:---|:---|:---:|:---|
-|GET|/api/jobs|-|実行中JOB一覧取得|
-|POST|/api/jobs|-|JOB登録|
-|GET|/api/jobs/count|-|実行中JOB個数取得|
-|PUT|/api/jobs/{id}/reassign|-|タクシー再割当|
-|PUT|/api/jobs/{id}/cancel|-|JOBキャンセル|
-|PUT|/api/jobs/{id}/abort|-|JOB中断|
-|GET|/api/jobs/history|○|運行履歴取得|
-|GET|/api/jobs/history/count/today|-|本日完了済みJOBの個数取得|
-|GET|/api/taxis|-|タクシー一覧取得|
-|GET|/api/taxis/count|-|タクシーの台数取得|
-|GET|/api/taxis/available|-|割当可能なタクシー一覧取得|
-|GET|/api/taxis/available/count|-|割当可能なタクシーの台数取得|
-|GET|/api/taxis/status|-|タクシー状態リストの取得|
-|GET|/api/taxis/{id}|-|タクシーの情報取得|
-|PUT|/api/taxis/{id}|-|タクシー状態の更新|
-|GET|/api/events|-|JOBまたはタクシーの状態変更通知|
+|Method|URI|RequestBody|Query|Description|
+|:---|:---|:---:|:---:|:---|
+|GET|/api/jobs|-|-|実行中JOB一覧取得|
+|POST|/api/jobs|○|-|JOB登録|
+|GET|/api/jobs/count|-|-|実行中JOB個数取得|
+|PUT|/api/jobs/{id}/reassign|○|-|タクシー再割当|
+|PUT|/api/jobs/{id}/cancel|-|-|JOBキャンセル|
+|PUT|/api/jobs/{id}/abort|-|-|JOB中断|
+|GET|/api/jobs/history|-|○|運行履歴取得|
+|GET|/api/jobs/history/count/today|-|-|本日完了済みJOBの個数取得|
+|GET|/api/taxis|-|-|タクシー一覧取得|
+|GET|/api/taxis/count|-|-|タクシーの台数取得|
+|GET|/api/taxis/available|-|-|割当可能なタクシー一覧取得|
+|GET|/api/taxis/available/count|-|-|割当可能なタクシーの台数取得|
+|GET|/api/taxis/status|-|-|タクシー状態リストの取得|
+|GET|/api/taxis/{id}|-|-|タクシーの情報取得|
+|PUT|/api/taxis/{id}|○|-|タクシー状態の更新|
+|GET|/api/events|-|-|JOBまたはタクシーの状態変更通知|
 
 ## 実行中JOB一覧取得
 
