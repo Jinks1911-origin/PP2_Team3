@@ -10,14 +10,15 @@
 |PUT|/api/jobs/{id}/reassign|-|タクシー再割当|
 |PUT|/api/jobs/{id}/cancel|-|JOBキャンセル|
 |PUT|/api/jobs/{id}/abort|-|JOB中断|
-|GET|/api/jobs/completed/count|-|本日の完了済みJOBの個数取得|
 |GET|/api/jobs/history|○|運行履歴取得|
+|GET|/api/jobs/history/count/today|-|本日完了済みJOBの個数取得|
 |GET|/api/taxis|-|タクシー一覧取得|
 |GET|/api/taxis/count|-|タクシーの台数取得|
 |GET|/api/taxis/available|-|割当可能なタクシー一覧|
 |GET|/api/taxis/available/count|-|割当可能なタクシーの台数取得|
-|GET|/api/taxis/{id}|-|指定したタクシーの情報取得|
-|PUT|/api/taxis/{id}|-|指定したタクシーのステータス更新|
+|GET|/api/taxis/{id}|-|タクシーの情報取得|
+|PUT|/api/taxis/{id}|-|タクシーのステータス更新|
+|GET|/api/events|-|JOBまたはタクシーの状態変更通知|
 
 ## 実行中JOB一覧取得
 
@@ -31,38 +32,34 @@ GET /api/jobs
 
 #### 200 OK
 
+正常
 ``` json
 [
   {
-    "id": 1,
+    "id": "J20260609-0051",
     "status": "Active",
-    "taxiName": "TX002",
     "fromLoc": "新居浜駅",
-    "toLoc": "イオンモール新居浜"
+    "toLoc": "イオンモール新居浜",
+    "taxiId": "TX002",
+    "driverName": "鈴木　次郎"
   },
   {
-    "id": 2,
+    "id": "J20260609-0052",
     "status": "Waiting",
-    "taxiName": "TX003",
     "fromLoc": "フレッシュバリュー喜光地",
-    "toLoc": "喜光地自治会館"
+    "toLoc": "喜光地自治会館",
+    "taxiId": "TX003",
+    "driverName": "高橋　三郎"
   },
   {
-    "id": 3,
+    "id": "J20260609-0053",
     "status": "Queued",
-    "taxiName": "",
     "fromLoc": "新須賀自治会館",
-    "toLoc": "フジ新居浜"
+    "toLoc": "フジ新居浜",
+    "taxiId": null,
+    "driverName": null
   }
 ]
-```
-
-#### 500 INTERNAL SERVER ERROR
-
-``` json
-{
-  "error": "JOBS_FETCH_FAILED"
-}
 ```
 
 ## JOB登録
@@ -82,12 +79,16 @@ POST /api/jobs
   "taxiId": 3
 }
 ```
+※サーバーへのタクシーID送信はintで送ること
 
 ### Response
 
 #### 201 Created
 
+正常
+``` json
 なし
+```
 
 #### 400 Bad Request
 
@@ -98,7 +99,7 @@ POST /api/jobs
 }
 ```
 
-タクシー割当失敗
+タクシー割当不可
 ``` json
 {
   "error": "CANNOT_ASSIGN"
@@ -117,17 +118,10 @@ GET /api/jobs/count
 
 #### 200 OK
 
+正常
 ``` json
 {
-  "jobsCount": 12
-}
-```
-
-#### 500 INTERNAL SERVER ERROR
-
-``` json
-{
-  "error": "JOBS_COUNT_FETCH_FAILED"
+  "count": 12
 }
 ```
 
@@ -146,16 +140,20 @@ PUT /api/jobs/{id}/reassign
   "taxiId": 2
 }
 ```
+※サーバーへのタクシーID送信はintで送ること
 
 ### Response
 
-#### 200 OK
+#### 204 No Content
 
+正常
+``` json
 なし
+```
 
 #### 400 Bad Request
 
-タクシー割当失敗
+タクシー割当不可
 ``` json
 {
   "error": "CANNOT_ASSIGN"
@@ -181,9 +179,12 @@ PUT /api/jobs/{id}/cancel
 
 ### Response
 
-#### 200 OK
+#### 204 No Content
 
+正常
+``` json
 なし
+```
 
 #### 400 Bad Request
 
@@ -213,9 +214,12 @@ PUT /api/jobs/{id}/abort
 
 ### Response
 
-#### 200 OK
+#### 204 No Content
 
+正常
+``` json
 なし
+```
 
 #### 400 Bad Request
 
@@ -235,25 +239,6 @@ JobIDが存在しない
 }
 ```
 
-## 本日の完了済みJOB個数取得
-
-### Request
-
-``` http
-GET /api/jobs/completed/count
-```
-
-### Response
-
-#### 200 OK
-
-``` json
-{
-  "jobsCount": 12
-}
-```
-
-
 ## 運行履歴取得
 
 ### Request
@@ -264,47 +249,87 @@ GET /api/jobs/history
 
 #### Query Parameter
 
-なし
+|Query|Parameter|Description|
+|---|---|---|
+|status|completed,aborted,canceled|JOB状態指定で絞り込み|
+|taxiId|(タクシーの番号)|タクシーID指定で絞り込み|
+|driverName|(ドライバーの名前)|ドライバー指定で絞り込み|
+|from|(JOB完了日の開始)|日付指定で絞り込み（toとセット）|
+|to|(JOB完了日の終了)|日付指定で絞り込み（fromとセット）|
 
 ### Response
 
 #### 200 OK
 
+正常
 ``` json
 [
   {
-    "id": 1,
+    "id": "J20260609-0041",
     "status": "Completed",
-    "taxiName": "TX002",
     "fromLoc": "新居浜駅",
-    "toLoc": "イオンモール新居浜"
+    "toLoc": "イオンモール新居浜",
+    "taxiId": "TX001",
+    "driverName": "佐藤　一郎",
+    "closedAt": "2026-06-01T14:23:18"
   },
   {
-    "id": 2,
+    "id": "J20260609-0042",
     "status": "Canceled",
-    "taxiName": "",
     "fromLoc": "フレッシュバリュー喜光地",
-    "toLoc": "喜光地自治会館"
+    "toLoc": "喜光地自治会館",
+    "taxiId": null,
+    "driverName": null,
+    "closedAt": "2026-06-01T15:48:18"
   },
   {
-    "id": 3,
-    "status": "Active",
-    "taxiName": "TX001",
+    "id": "J20260609-0043",
+    "status": "Canceled",
     "fromLoc": "新須賀自治会館",
-    "toLoc": "フジ新居浜"
+    "toLoc": "フジ新居浜",
+    "taxiId": "TX002",
+    "driverName": "鈴木　次郎",
+    "closedAt": "2026-06-02T09:21:18"
+  },
+  {
+    "id": "J20260609-0044",
+    "status": "Aborted",
+    "fromLoc": "リーガロイヤルホテル新居浜",
+    "toLoc": "住友別子病院",
+    "taxiId": "TX003",
+    "driverName": "高橋　三郎",
+    "closedAt": "2026-06-02T11:37:22"
   }
 ]
 ```
 
-#### 500 INTERNAL SERVER ERROR
+### 400 Bad Request
 
+クエリパラメータ異常
 ``` json
 {
-  "error": "JOB_HISTORY_FETCH_FAILED"
+  "error": "INVALID_QUERY"
 }
-``` 
+```
 
+## 本日の完了済みJOB個数取得
 
+### Request
+
+``` http
+GET /api/jobs/history/count/today
+```
+
+### Response
+
+#### 200 OK
+
+正常
+``` json
+{
+  "count": 12
+}
+```
 
 ## タクシー一覧取得
 
@@ -314,27 +339,53 @@ GET /api/jobs/history
 GET /api/taxis
 ```
 
-#### Query Parameter
+### Response
 
-なし
+#### 200 OK
+
+``` json
+[
+  {
+    "id": 1,
+    "status": "Active",
+    "driverName": "佐藤　一郎",
+    "jobId": "J004"
+  },
+  {
+    "id": 2,
+    "status": "Idle",
+    "driverName": "鈴木　次郎",
+    "jobId": null
+  }
+]
+```
+
+## タクシーの台数取得
+
+### Request
+
+``` http
+GET /api/taxis/count
+```
 
 ### Response
 
+#### 200 OK
 
+正常
+``` json
+{
+  "count": 4
+}
+```
 
-
-
-## 割当可能なタクシー一覧
+## 割当可能なタクシー一覧取得
 
 ### Request
 
 ``` http
 GET /api/taxis/available
 ```
-
-#### Query Parameter
-
-なし
 
 ### Response
 
@@ -344,10 +395,10 @@ GET /api/taxis/available
 ``` json
 [
   {
-    "taxiName": "TX003"
+    "taxiId": "TX002"
   },
   {
-    "taxiName": "TX005"
+    "taxiId": "TX003"
   }
 ]
 ```
@@ -357,10 +408,172 @@ GET /api/taxis/available
 []
 ```
 
-#### 500 INTERNAL SERVER ERROR
+## 割当可能なタクシーの台数取得
+
+### Request
+
+``` http
+GET /api/taxis/available/count
+```
+
+### Response
+
+#### 200 OK
+
+正常
+``` json
+{
+  "count": 2
+}
+```
+
+## タクシーの情報取得
+
+### Request
+
+``` http
+GET /api/taxis/{id}
+```
+
+### Response
+
+#### 200 OK
+
+正常
+``` json
+{
+  "taxiId": "TX001",
+  "status": "Reserved",
+  "driverName": "佐藤　一郎",
+  "jobId": "J20260609-0034",
+  "fromLoc": "新居浜駅",
+  "toLoc": "銅夢キッチン"
+}
+```
+
+#### 404 Not Found
+
+存在しないタクシーIDを指定した
+``` json
+{
+  "error": "TAXI_NOT_FOUND"
+}
+```
+
+## タクシーのステータス更新
+
+### Request
+
+``` http
+PUT /api/taxis/{id}
+```
+
+#### Request Body
 
 ``` json
 {
-  "error": "AVAILABLE_TAXIS_FETCH_FAILED"
+  "statusId": 1
 }
 ```
+
+### Response
+
+#### 204 No Content
+
+正常
+``` json
+なし
+```
+
+#### 400 Bad Request
+
+不正なステータスを送信
+``` json
+{
+  "error": "INVALID_STATUS"
+}
+```
+
+#### 404 Not Found
+
+存在しないタクシーIDを指定した
+``` json
+{
+  "error": "TAXI_NOT_FOUND"
+}
+```
+
+## タクシー状態リスト取得
+
+### Request
+
+``` http
+GET /api/taxis/status
+```
+### Response
+
+#### 200 OK
+
+正常
+``` json
+[
+  {
+    "id": 1,
+    "name": "Idle"
+  },
+  {
+    "id": 2,
+    "name": "Reserved"
+  },
+  {
+    "id": 3,
+    "name": "Occupied"
+  },
+  {
+    "id": 4,
+    "name": "Offduty"
+  }
+]
+```
+
+## JOBまたはタクシーの状態変更通知
+
+### Request
+
+``` http
+GET /api/events
+```
+
+### Response
+
+#### 204 No Content
+
+``` json
+なし
+```
+
+## その他共通エラー
+
+### Response
+
+#### 404 Not Found
+
+/apiにGETを送った等実装していないURIへのアクセス
+``` http
+なし
+```
+
+#### 405 Method Not Allowed
+
+各APIの規定外メソッドを受信した
+``` http
+なし
+```
+
+#### 500 Internal Server Error
+
+なんらかのサーバーエラー（DBエラー等）
+``` http
+なし
+```
+
