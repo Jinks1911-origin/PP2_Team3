@@ -557,7 +557,7 @@ GET /api/events
 
 ### Response
 
-#### 200 No Content
+#### 200 OK
 
 変更イベントがあった
 ``` json
