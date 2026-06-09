@@ -348,7 +348,7 @@ GET /api/taxis
 [
   {
     "id": 1,
-    "status": "Active",
+    "status": "Occupied",
     "driverName": "佐藤　一郎",
     "jobId": "J004"
   },
