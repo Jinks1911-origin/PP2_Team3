@@ -123,6 +123,7 @@ sequenceDiagram
 ## 状態遷移図
 
 ### JOB状態
+
 ``` mermaid
 stateDiagram-v2
     [*] --> Queued
@@ -144,6 +145,7 @@ stateDiagram-v2
 ```
 
 ### タクシー状態
+
 ``` mermaid
 stateDiagram-v2
     [*] --> OffDuty
@@ -159,9 +161,9 @@ stateDiagram-v2
     Occupied --> Idle : 降車
 ```
 
-### テーブル定義
+## テーブル定義
 
-1. jobs：JOB
+### jobs：JOB
 
 |物理カラム名|データ型|制約|備考|
 |---|---|---|---|
@@ -171,7 +173,7 @@ stateDiagram-v2
 |from_loc|NVARCHAR(20)|NOT NULL|乗車地|
 |to_loc|NVARCHAR(20)|NOT NULL|降車地|
 
-2. taxis：タクシー
+### taxis：タクシー
 
 |物理カラム名|データ型|制約|備考|
 |---|---|---|---|
@@ -179,23 +181,23 @@ stateDiagram-v2
 |taxi_status_id|INT|NOT NULL, FK(taxi_status.id)|タクシーの現在状態|
 |driver_name|NVARCHAR(20)|NOT NULL|運転手の名前|
 
-3. job_status：JOBの状態
+### job_status：JOBの状態
 
 |物理カラム名|データ型|制約|備考|
 |---|---|---|---|
 |id|INT|PK,IDENTITY|自動採番|
 |status_name|NVARCHAR(10)|NOT NULL, UNIQUE|ステータス名|
 
-4. taxi_status：タクシーの状態
+### taxi_status：タクシーの状態
 
 |物理カラム名|データ型|制約|備考|
 |---|---|---|---|
 |id|INT|PK,IDENTITY|自動採番|
 |status_name|NVARCHAR(10)|NOT NULL, UNIQUE|ステータス名|
 
-### ロギング設計
+## ロギング設計
 
-1. システムログ
+### システムログ
 
 |ログレベル|出力タイミング|メッセージ例|
 |---|---|---|
@@ -204,35 +206,35 @@ stateDiagram-v2
 |ERROR|DB接続エラー、通信確立失敗|通信確立失敗：アクセスを拒否されました|
 |FITAL|異常終了|サーバーを起動できませんでした|
 
-2. JOB状態遷移
+### JOB状態遷移
 
 |ログレベル|出力タイミング|メッセージ例|
 |---|---|---|
 |INFO|状態遷移時|J001:QUEUED->WAITING:TX001|
 |WARN|状態遷移不可|J001:WAITING->COMPLETED:INVALID_TRANSITION|
 
-3. タクシー状態遷移ログ
+### タクシー状態遷移ログ
 
 |ログレベル|出力タイミング|メッセージ例|
 |---|---|---|
 |INFO|状態遷移時|TX001:IDLE->RESERVED:J001|
 |WARN|状態遷移不可|TX001:RESERVED->OFFDUTY:INVALID_TRANSITION|
 
-4. オペレーションログ
+### オペレーションログ
 
 |ログレベル|出力タイミング|メッセージ例|
 |---|---|---|
 |INFO|通常操作|J001 REGISTERED|
 |WARN|異常操作|J001 NOT_REGISTERED:INVALID_INPUT|
 
-5. DB操作ログ
+### DB操作ログ
 
 |ログレベル|出力タイミング|メッセージ例|
 |---|---|---|
 |INFO|正常な操作|[成功]JOB一覧取得|
 |ERROR|異常操作|[失敗]JOB一覧取得:SQL_ERROR|
 
-6. 通信ログ
+### 通信ログ
 
 |ログレベル|出力タイミング|メッセージ例|
 |---|---|---|
