@@ -28,6 +28,21 @@
 - ディネス : フロントエンド、ワイヤーフレーム
 - 越智孝 : バックエンド、スタブ、データ・API定義
 
+
+## 使用するパッケージ・ライブラリ
+
+### フロントエンド: HTML/CSS + JavaScript
+- Bootstrap：HTMLフレームワーク
+
+### バックエンド: ASP.NET Core Web API (C# / .NET 10)
+- NLog, NLog.Web.AspNetCore , NLog.Schema：ロギングアプリ
+- Microsoft.Data.SqlClient：SQL Server用プロバイダ
+- Dapper：SQL拡張ライブラリ
+- Scalar.AspNetCore：APIテスト用画面
+
+### タクシースタブ: C# / .NET 10 コンソールアプリケーション
+- 追加パッケージなし
+
 ## シーケンス図
 
 ```mermaid
@@ -274,18 +289,4 @@ stateDiagram-v2
 |INFO|ステータス200系|[200]192.168.10.24 GET /api/jobs|
 |WARN|400系エラー|[404]192.168.10.24 PUT /api/jobs/J20260801-0044/reassign:JOB_NOT_FOUND|
 |ERROR|500系エラー|[500]192.168.10.24 PUT /api/jobs/J20260801-0044/reassign|
-
-## 使用するパッケージ・ライブラリ
-
-### フロントエンド: HTML/CSS + JavaScript
-- Bootstrap：HTMLフレームワーク
-
-### バックエンド: ASP.NET Core Web API (C# / .NET 10)
-- NLog, NLog.Web.AspNetCore , NLog.Schema：ロギングアプリ
-- Microsoft.Data.SqlClient：SQL Server用プロバイダ
-- Dapper：SQL拡張ライブラリ
-- Scalar.AspNetCore：APIテスト用画面
-
-### タクシースタブ: C# / .NET 10 コンソールアプリケーション
-- 追加パッケージなし
 
