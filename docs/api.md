@@ -578,7 +578,7 @@ GET /api/events
 
 #### 404 Not Found
 
-/apiにGETを送った等実装していないURIへのアクセス
+/api等実装していないURIへのアクセス
 ``` http
 なし
 ```
