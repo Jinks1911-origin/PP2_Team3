@@ -14,10 +14,11 @@
 |GET|/api/jobs/history/count/today|-|本日完了済みJOBの個数取得|
 |GET|/api/taxis|-|タクシー一覧取得|
 |GET|/api/taxis/count|-|タクシーの台数取得|
-|GET|/api/taxis/available|-|割当可能なタクシー一覧|
+|GET|/api/taxis/available|-|割当可能なタクシー一覧取得|
 |GET|/api/taxis/available/count|-|割当可能なタクシーの台数取得|
 |GET|/api/taxis/{id}|-|タクシーの情報取得|
-|PUT|/api/taxis/{id}|-|タクシーのステータス更新|
+|PUT|/api/taxis/{id}|-|タクシー状態の更新|
+|GET|/api/taxis/status|-|タクシー状態リストの取得|
 |GET|/api/events|-|JOBまたはタクシーの状態変更通知|
 
 ## 実行中JOB一覧取得
@@ -254,8 +255,8 @@ GET /api/jobs/history
 |status|completed,aborted,canceled|JOB状態指定で絞り込み|
 |taxiId|(タクシーの番号)|タクシーID指定で絞り込み|
 |driverName|(ドライバーの名前)|ドライバー指定で絞り込み|
-|from|(JOB完了日の開始)|日付指定で絞り込み（toとセット）|
-|to|(JOB完了日の終了)|日付指定で絞り込み（fromとセット）|
+|from|(JOB終了日の開始)|日付指定で絞り込み（toとセット）|
+|to|(JOB終了日の終了)|日付指定で絞り込み（fromとセット）|
 
 ### Response
 
@@ -531,7 +532,7 @@ GET /api/taxis/status
   },
   {
     "id": 4,
-    "name": "Offduty"
+    "name": "OffDuty"
   }
 ]
 ```
