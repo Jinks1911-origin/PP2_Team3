@@ -37,7 +37,7 @@ GET /api/jobs
 ``` json
 [
   {
-    "id": "J20260609-0051",
+    "jobId": "J20260609-0051",
     "status": "Active",
     "fromLoc": "新居浜駅",
     "toLoc": "イオンモール新居浜",
@@ -45,7 +45,7 @@ GET /api/jobs
     "driverName": "鈴木　次郎"
   },
   {
-    "id": "J20260609-0052",
+    "jobId": "J20260609-0052",
     "status": "Waiting",
     "fromLoc": "フレッシュバリュー喜光地",
     "toLoc": "喜光地自治会館",
@@ -53,7 +53,7 @@ GET /api/jobs
     "driverName": "高橋　三郎"
   },
   {
-    "id": "J20260609-0053",
+    "jobId": "J20260609-0053",
     "status": "Queued",
     "fromLoc": "新須賀自治会館",
     "toLoc": "フジ新居浜",
@@ -77,10 +77,9 @@ POST /api/jobs
 {
   "fromLoc": "新居浜駅",
   "toLoc": "イオンモール新居浜",
-  "taxiId": 3
+  "taxiId": "TX003"
 }
 ```
-※サーバーへのタクシーID送信はintで送ること
 
 ### Response
 
@@ -138,10 +137,9 @@ PUT /api/jobs/{id}/reassign
 
 ``` json
 {
-  "taxiId": 2
+  "taxiId": "TX002"
 }
 ```
-※サーバーへのタクシーID送信はintで送ること
 
 ### Response
 
@@ -266,7 +264,7 @@ GET /api/jobs/history
 ``` json
 [
   {
-    "id": "J20260609-0041",
+    "jobId": "J20260609-0041",
     "status": "Completed",
     "fromLoc": "新居浜駅",
     "toLoc": "イオンモール新居浜",
@@ -275,7 +273,7 @@ GET /api/jobs/history
     "closedAt": "2026-06-01T14:23:18"
   },
   {
-    "id": "J20260609-0042",
+    "jobId": "J20260609-0042",
     "status": "Canceled",
     "fromLoc": "フレッシュバリュー喜光地",
     "toLoc": "喜光地自治会館",
@@ -284,7 +282,7 @@ GET /api/jobs/history
     "closedAt": "2026-06-01T15:48:18"
   },
   {
-    "id": "J20260609-0043",
+    "jobId": "J20260609-0043",
     "status": "Canceled",
     "fromLoc": "新須賀自治会館",
     "toLoc": "フジ新居浜",
@@ -293,7 +291,7 @@ GET /api/jobs/history
     "closedAt": "2026-06-02T09:21:18"
   },
   {
-    "id": "J20260609-0044",
+    "jobId": "J20260609-0044",
     "status": "Aborted",
     "fromLoc": "リーガロイヤルホテル新居浜",
     "toLoc": "住友別子病院",
@@ -347,15 +345,27 @@ GET /api/taxis
 ``` json
 [
   {
-    "id": 1,
+    "taxiId": "TX001",
     "status": "Occupied",
     "driverName": "佐藤　一郎",
     "jobId": "J004"
   },
   {
-    "id": 2,
+    "taxiId": "TX002",
     "status": "Idle",
     "driverName": "鈴木　次郎",
+    "jobId": null
+  },
+  {
+    "taxiId": "TX003",
+    "status": "Idle",
+    "driverName": "高橋　三郎",
+    "jobId": null
+  },
+  {
+    "taxiId": "TX004",
+    "status": "OffDuty",
+    "driverName": "田中　史郎",
     "jobId": null
   }
 ]
@@ -547,11 +557,20 @@ GET /api/events
 
 ### Response
 
-#### 204 No Content
+#### 200 No Content
 
+変更イベントがあった
 ``` json
 なし
 ```
+
+#### 204 No Content
+
+変更イベントなく、30秒経過した
+``` json
+なし
+```
+
 
 ## その他共通エラー
 
