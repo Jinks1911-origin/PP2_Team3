@@ -16,6 +16,8 @@
 |GET|/api/taxis/count|-|タクシーの台数取得|
 |GET|/api/taxis/available|-|割当可能なタクシー一覧|
 |GET|/api/taxis/available/count|-|割当可能なタクシーの台数取得|
+|GET|/api/taxis/{id}|-|指定したタクシーの情報取得|
+|PUT|/api/taxis/{id}|-|指定したタクシーのステータス更新|
 
 ## 実行中JOB一覧取得
 
@@ -134,7 +136,7 @@ GET /api/jobs/count
 ### Request
 
 ``` http
-PUT /api/jobs/{id}/assign
+PUT /api/jobs/{id}/reassign
 ```
 
 #### Request Body
@@ -177,10 +179,6 @@ JobIDが存在しない
 PUT /api/jobs/{id}/cancel
 ```
 
-#### Request Body
-
-なし
-
 ### Response
 
 #### 200 OK
@@ -213,10 +211,6 @@ JobIDが存在しない
 PUT /api/jobs/{id}/abort
 ```
 
-#### Request Body
-
-なし
-
 ### Response
 
 #### 200 OK
@@ -240,6 +234,26 @@ JobIDが存在しない
   "error": "JOB_NOT_FOUND"
 }
 ```
+
+## 本日の完了済みJOB個数取得
+
+### Request
+
+``` http
+GET /api/jobs/completed/count
+```
+
+### Response
+
+#### 200 OK
+
+``` json
+{
+  "jobsCount": 12
+}
+```
+
+
 ## 運行履歴取得
 
 ### Request
