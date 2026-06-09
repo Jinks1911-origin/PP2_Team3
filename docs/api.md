@@ -16,9 +16,9 @@
 |GET|/api/taxis/count|-|タクシーの台数取得|
 |GET|/api/taxis/available|-|割当可能なタクシー一覧取得|
 |GET|/api/taxis/available/count|-|割当可能なタクシーの台数取得|
+|GET|/api/taxis/status|-|タクシー状態リストの取得|
 |GET|/api/taxis/{id}|-|タクシーの情報取得|
 |PUT|/api/taxis/{id}|-|タクシー状態の更新|
-|GET|/api/taxis/status|-|タクシー状態リストの取得|
 |GET|/api/events|-|JOBまたはタクシーの状態変更通知|
 
 ## 実行中JOB一覧取得
@@ -428,6 +428,39 @@ GET /api/taxis/available/count
 }
 ```
 
+## タクシー状態リストの取得
+
+### Request
+
+``` http
+GET /api/taxis/status
+```
+### Response
+
+#### 200 OK
+
+正常
+``` json
+[
+  {
+    "id": 1,
+    "name": "Idle"
+  },
+  {
+    "id": 2,
+    "name": "Reserved"
+  },
+  {
+    "id": 3,
+    "name": "Occupied"
+  },
+  {
+    "id": 4,
+    "name": "OffDuty"
+  }
+]
+```
+
 ## タクシーの情報取得
 
 ### Request
@@ -461,7 +494,7 @@ GET /api/taxis/{id}
 }
 ```
 
-## タクシーのステータス更新
+## タクシー状態の更新
 
 ### Request
 
@@ -502,39 +535,6 @@ PUT /api/taxis/{id}
 {
   "error": "TAXI_NOT_FOUND"
 }
-```
-
-## タクシー状態リスト取得
-
-### Request
-
-``` http
-GET /api/taxis/status
-```
-### Response
-
-#### 200 OK
-
-正常
-``` json
-[
-  {
-    "id": 1,
-    "name": "Idle"
-  },
-  {
-    "id": 2,
-    "name": "Reserved"
-  },
-  {
-    "id": 3,
-    "name": "Occupied"
-  },
-  {
-    "id": 4,
-    "name": "OffDuty"
-  }
-]
 ```
 
 ## JOBまたはタクシーの状態変更通知
