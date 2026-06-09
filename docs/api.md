@@ -2,7 +2,7 @@
 
 ## API一覧
 
-|Method|URI|RequestBody|Query|Description|
+|Method|URI|Request Body|Query|Description|
 |:---|:---|:---:|:---:|:---|
 |GET|/api/jobs|-|-|実行中JOB一覧取得|
 |POST|/api/jobs|○|-|JOB登録|
