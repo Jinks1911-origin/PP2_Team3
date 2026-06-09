@@ -2,18 +2,19 @@
 
 ## 課題テーマ
 
-### 【バッググラウンド】
+### 【バックグラウンド】
 
  　タクシーを４，５台運用する小規模タクシー会社を想定した、タクシーの運行管理システム（TMS:Taxi Management System）を開発する。まず、配車センターのオペレーターは顧客からの予約電話を受けて、それを画面上に登録する（以後、JOB）。
  オペレータは手動でJOBを登録し、Idle状態のタクシーを割り当てることができる。割当可能なタクシーがなければ、JOB作成のみを行い、キューイングする。
  タクシー（スタブ）は、ポーリングで自身のJOBを監視し、JOB割当後は手動で進捗を報告する。今回はタクシーの空車営業を想定しない。
 
 ### 【機能と役割】
-1. オペレータ画面：フロントエンド（Java Script）
+1. オペレータ画面：フロントエンド（JavaScript）
   - 電話から受けた予約情報を登録する
   - タクシーを手配する
   - ジョブの進捗の管理、履歴を確認できる
   - タクシーの現在状態を確認できる
+  - JOBまたはタクシーの変更通知を受けて、JOBリストの取得またはタクシー一覧の取得を行う（ロングポーリング）
 2. APIサーバー：バックエンド（ASP.NET Web API）
   - オペレータ画面からに応答する
   - タクシーアプリに応答する
@@ -21,6 +22,7 @@
 3. タクシーアプリ：スタブ（C#コンソール）
   - 自身の状態を切り替え、自身の現在状態をAPIサーバーに送信する
   - APIサーバーから受け取ったジョブ情報を表示する
+  - JOBまたはタクシーの変更通知を受けて、JOBリストの取得またはタクシー一覧の取得を行う（ロングポーリング）
 
 ### 【担当者】
 - ディネス : フロントエンド、ワイヤーフレーム
@@ -120,6 +122,10 @@ sequenceDiagram
     API-->>History: 全JOB履歴
 ```
 
+補足：
+- ONジョブ：Queued / Waiting / Active / Aborting
+- OFFジョブ：Completed / Canceled / Aborted
+
 ## 状態遷移図
 
 ### JOB状態
@@ -167,17 +173,19 @@ stateDiagram-v2
 
 |物理カラム名|データ型|制約|備考|
 |---|---|---|---|
-|id|INT|PK,IDENTITY|自動採番|
+|id|CHAR(14)|PK|J+yyyyMMdd+"-"+4桁連番|
 |job_status_id|INT|NOT NULL, FK(job_status.id)|JOBの現在状態|
-|taxi_id|INT|FK(taxis.id)|割当済みのタクシー|
+|taxi_id|CHAR(5)|FK(taxis.id)|割当済みのタクシー|
 |from_loc|NVARCHAR(20)|NOT NULL|乗車地|
 |to_loc|NVARCHAR(20)|NOT NULL|降車地|
+|created_at|DATETIME|DEFAULT GETDATE()|JOB登録日|
+|closed_at|DATETIME||JOB終了日|
 
 ### taxis：タクシー
 
 |物理カラム名|データ型|制約|備考|
 |---|---|---|---|
-|id|INT|PK,IDENTITY|自動採番|
+|id|CHAR(5)|PK|TX+3桁連番|
 |taxi_status_id|INT|NOT NULL, FK(taxi_status.id)|タクシーの現在状態|
 |driver_name|NVARCHAR(20)|NOT NULL|運転手の名前|
 
@@ -195,6 +203,29 @@ stateDiagram-v2
 |id|INT|PK,IDENTITY|自動採番|
 |status_name|NVARCHAR(10)|NOT NULL, UNIQUE|ステータス名|
 
+## マスターデータ定義
+
+### job_status：JOBの状態
+
+|id|status_name|
+|---|---|
+|1|Queued|
+|2|Waiting|
+|3|Active|
+|4|Aborting|
+|5|Completed|
+|6|Canceled|
+|7|Aborted|
+
+### taxi_status：タクシーの状態
+
+|id|status_name|
+|---|---|
+|1|Idle|
+|2|Reserved|
+|3|Occupied|
+|4|OffDuty|
+
 ## ロギング設計
 
 ### システムログ
@@ -204,7 +235,7 @@ stateDiagram-v2
 |INFO|アプリ起動/終了|アプリケーション起動|
 |WARN|制約付き実行|localhostで起動|
 |ERROR|DB接続エラー、通信確立失敗|通信確立失敗：アクセスを拒否されました|
-|FITAL|異常終了|サーバーを起動できませんでした|
+|FATAL|異常終了|サーバーを起動できませんでした|
 
 ### JOB状態遷移
 
@@ -256,6 +287,3 @@ stateDiagram-v2
 ### タクシースタブ: C# / .NET 10 コンソールアプリケーション
 - 追加パッケージなし
 
-## aaaaa
-
-aaaa
