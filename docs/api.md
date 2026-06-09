@@ -2,22 +2,22 @@
 
 ## API一覧
 
-|Method|URI|Description|
-|---|---|---|
-|GET|/api/jobs|JOB一覧取得|
-|POST|/api/jobs|JOB登録|
-|GET|/api/jobs/active/count|実行中JOBの個数取得|
-|PUT|/api/jobs/{id}/assign|タクシー再割当|
-|PUT|/api/jobs/{id}/cancel|JOBキャンセル|
-|PUT|/api/jobs/{id}/abort|JOB中断|
-|GET|/api/jobs/completed/count|本日の完了済みJOBの個数取得|
-|GET|/api/jobs/history|運行履歴取得|
-|GET|/api/taxis|タクシー一覧取得|
-|GET|/api/taxis/count|タクシーの台数取得|
-|GET|/api/taxis/available|割当可能なタクシー一覧|
-|GET|/api/taxis/available/count|割当可能なタクシーの台数取得|
+|Method|URI|Query|Description|
+|:---|:---|:---:|:---|
+|GET|/api/jobs|-|実行中JOB一覧取得|
+|POST|/api/jobs|-|JOB登録|
+|GET|/api/jobs/count|-|実行中JOB個数取得|
+|PUT|/api/jobs/{id}/reassign|-|タクシー再割当|
+|PUT|/api/jobs/{id}/cancel|-|JOBキャンセル|
+|PUT|/api/jobs/{id}/abort|-|JOB中断|
+|GET|/api/jobs/completed/count|-|本日の完了済みJOBの個数取得|
+|GET|/api/jobs/history|○|運行履歴取得|
+|GET|/api/taxis|-|タクシー一覧取得|
+|GET|/api/taxis/count|-|タクシーの台数取得|
+|GET|/api/taxis/available|-|割当可能なタクシー一覧|
+|GET|/api/taxis/available/count|-|割当可能なタクシーの台数取得|
 
-## JOB一覧取得
+## 実行中JOB一覧取得
 
 ### Request
 
@@ -25,47 +25,43 @@
 GET /api/jobs
 ```
 
-#### Query Parameter
-
-なし
-
 ### Response
 
 #### 200 OK
 
 ``` json
-{
-  "activeJobCount": 3,
-  "completeJobCount": 0,
-  "totalTaxiCount": 4,
-  "avilableTaxiCount": 2,
-  "activeDetails": [
-    {
-      "id": 1,
-      "status": "Active",
-      "taxiName": "TX002",
-      "fromLoc": "新居浜駅",
-      "toLoc": "イオンモール新居浜"
-    },
-    {
-      "id": 2,
-      "status": "Waiting",
-      "taxiName": "TX003",
-      "fromLoc": "フレッシュバリュー喜光地",
-      "toLoc": "喜光地自治会館"
-    },
-    {
-      "id": 3,
-      "status": "Queued",
-      "taxiName": "",
-      "fromLoc": "新須賀自治会館",
-      "toLoc": "フジ新居浜"
-    }
-  ]
-}
+[
+  {
+    "id": 1,
+    "status": "Active",
+    "taxiName": "TX002",
+    "fromLoc": "新居浜駅",
+    "toLoc": "イオンモール新居浜"
+  },
+  {
+    "id": 2,
+    "status": "Waiting",
+    "taxiName": "TX003",
+    "fromLoc": "フレッシュバリュー喜光地",
+    "toLoc": "喜光地自治会館"
+  },
+  {
+    "id": 3,
+    "status": "Queued",
+    "taxiName": "",
+    "fromLoc": "新須賀自治会館",
+    "toLoc": "フジ新居浜"
+  }
+]
 ```
 
-※ Error なし
+#### 500 INTERNAL SERVER ERROR
+
+``` json
+{
+  "error": "JOBS_FETCH_FAILED"
+}
+```
 
 ## JOB登録
 
@@ -104,6 +100,32 @@ POST /api/jobs
 ``` json
 {
   "error": "CANNOT_ASSIGN"
+}
+```
+
+## 実行中JOB個数取得
+
+### Request
+
+``` http
+GET /api/jobs/count
+```
+
+### Response
+
+#### 200 OK
+
+``` json
+{
+  "jobsCount": 12
+}
+```
+
+#### 500 INTERNAL SERVER ERROR
+
+``` json
+{
+  "error": "JOBS_COUNT_FETCH_FAILED"
 }
 ```
 
