@@ -22,7 +22,7 @@
 3. タクシーアプリ：スタブ（C#コンソール）
   - 自身の状態を切り替え、自身の現在状態をAPIサーバーに送信する
   - APIサーバーから受け取ったジョブ情報を表示する
-  - JOBまたはタクシーの変更通知を受けて、JOBリストの取得またはタクシー一覧の取得を行う（ロングポーリング）
+  - JOBまたはタクシーの変更通知を受けて、タクシー状態の取得を行う（ロングポーリング）
 
 ### 【担当者】
 - ディネス : フロントエンド、ワイヤーフレーム
@@ -73,13 +73,13 @@ sequenceDiagram
     alt JOBキャンセル
         Operator->>JobList: キャンセル操作
         JobList->>API: JOBキャンセル要求
-        API->>DB: JOBをOFFへ更新
+        API->>DB: JOBをCanceledへ更新
         API->>DB: タクシー割当解除
         API-->>JobList: キャンセル結果
     else JOBアボート
         Operator->>JobList: アボート操作
         JobList->>API: JOBアボート要求
-        API->>DB: JOBをOFFへ更新
+        API->>DB: JOBをAbortedへ更新
         API->>DB: タクシー割当解除
         API-->>JobList: アボート結果
     else 再アサイン
@@ -90,13 +90,13 @@ sequenceDiagram
         API-->>JobList: タクシー一覧
 
         JobList->>API: 再アサイン要求
-        API->>DB: 対象JOBのタクシー状態確認
+        API->>DB: 選択したタクシーの状態確認
 
-        alt TaxiStatus = NotAssigned
+        alt 選択したタクシー = Idle
             API->>DB: JOBにタクシーを再割当
             API->>DB: タクシー状態更新
             API-->>JobList: 再アサイン成功
-        else TaxiStatus != NotAssigned
+        else 選択したタクシー != Idle
             API-->>JobList: 再アサイン不可
         end
     end
@@ -269,9 +269,9 @@ stateDiagram-v2
 
 |ログレベル|出力タイミング|メッセージ例|
 |---|---|---|
-|INFO|ステータス200系|[200]192.168.10.24 POST /api/register|
-|WARN|400系エラー|[404]192.168.10.24 GET /api/jobs/44:JOB_NOT_FOUND|
-|ERROR|500系エラー|[500]192.168.10.24 GET /api/jobs/44:DB_ACCESS_FAILED|
+|INFO|ステータス200系|[200]192.168.10.24 GET /api/jobs|
+|WARN|400系エラー|[404]192.168.10.24 PUT /api/jobs/J20260801-0044/reassign:JOB_NOT_FOUND|
+|ERROR|500系エラー|[500]192.168.10.24 PUT /api/jobs/J20260801-0044/reassign|
 
 ## 使用するパッケージ・ライブラリ
 
