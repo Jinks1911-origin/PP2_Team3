@@ -1,10 +1,21 @@
+using Scalar.AspNetCore;
+using TaxiManagementSystem.API.Notifier;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
+builder.Services.AddSingleton<EventNotifier>();
+
 builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
+
+// ポートの設定
+builder.WebHost.ConfigureKestrel(options =>
+{
+    options.ListenAnyIP(8080);
+});
 
 var app = builder.Build();
 
@@ -12,6 +23,15 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+
+    app.MapScalarApiReference(
+        endpointPrefix:"/api-docs",
+        configureOptions: options =>
+        {
+            options
+                .WithTitle("Title")
+                .WithTheme(ScalarTheme.BluePlanet);
+        });
 }
 
 app.UseHttpsRedirection();
